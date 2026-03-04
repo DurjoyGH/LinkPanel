@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import showToast from "../Toast/CustomToast.jsx";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -12,11 +14,33 @@ const linkClass = ({ isActive }) =>
     isActive ? "underline" : "hover:underline"
   }`;
 
+// Rounded filled button with rounded border on hover
+const actionLinkClass = ({ isActive }) =>
+  `px-4 py-1.5 rounded-lg font-medium text-sm text-white transition-all border-2 ${
+    isActive
+      ? "border-[#212529]"
+      : "border-transparent hover:border-[#212529]"
+  }`;
+
+const actionBtnClass =
+  "px-4 py-1.5 rounded-lg font-medium text-sm text-white transition-all border-2 border-transparent hover:border-[#212529]";
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isAuthenticated, isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const dashboardTo = isAdmin ? "/admin" : "/links";
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+    showToast.success("Logged out successfully.");
+    navigate("/");
+  };
 
   return (
-    <nav className="w-full" style={{ backgroundColor: "#adb5bd" }}>
+    <nav className="w-full relative z-50" style={{ backgroundColor: "#adb5bd" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo - Left */}
@@ -45,15 +69,34 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Login - Right (Desktop) */}
-          <div className="hidden md:flex flex-shrink-0">
-            <Link
-              to="/login"
-              className="px-4 py-1.5 rounded-lg font-medium text-sm text-white hover:opacity-85 transition-opacity"
-              style={{ backgroundColor: "#6c757d" }}
-            >
-              Login
-            </Link>
+          {/* Auth Actions - Right (Desktop) */}
+          <div className="hidden md:flex flex-shrink-0 items-center gap-2">
+            {isAuthenticated ? (
+              <>
+                <NavLink
+                  to={dashboardTo}
+                  className={actionLinkClass}
+                  style={{ backgroundColor: "#6c757d" }}
+                >
+                  Dashboard
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className={actionBtnClass}
+                  style={{ backgroundColor: "#6c757d" }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <NavLink
+                to="/login"
+                className={actionLinkClass}
+                style={{ backgroundColor: "#6c757d" }}
+              >
+                Login
+              </NavLink>
+            )}
           </div>
 
           {/* Hamburger - Mobile */}
@@ -80,27 +123,67 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden px-4 pb-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              end={link.to === "/"}
-              className={linkClass}
-              style={{ color: "#212529" }}
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </NavLink>
-          ))}
-          <Link
-            to="/login"
-            className="self-start px-4 py-1.5 rounded-lg font-medium text-sm text-white hover:opacity-85 transition-opacity"
-            style={{ backgroundColor: "#6c757d" }}
-            onClick={() => setMenuOpen(false)}
-          >
-            Login
-          </Link>
+        <div className="md:hidden border-t relative z-50 shadow-md" style={{ borderColor: "#21252933", backgroundColor: "#adb5bd" }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 flex flex-col gap-3">
+          {/* Nav links */}
+          <div className="flex flex-col gap-3 pt-3">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.label}
+                to={link.to}
+                end={link.to === "/"}
+                className={linkClass}
+                style={{ color: "#212529" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t" style={{ borderColor: "#21252933" }} />
+
+          {/* Auth buttons */}
+          <div className="flex flex-col gap-2">
+            {isAuthenticated ? (
+              <>
+                <NavLink
+                  to={dashboardTo}
+                  className={({ isActive }) =>
+                    `w-full text-center px-4 py-1.5 rounded-lg font-medium text-sm text-white transition-all border-2 ${
+                      isActive ? "border-[#212529]" : "border-transparent hover:border-[#212529]"
+                    }`
+                  }
+                  style={{ backgroundColor: "#6c757d" }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Dashboard
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-center px-4 py-1.5 rounded-lg font-medium text-sm text-white transition-all border-2 border-transparent hover:border-[#212529]"
+                  style={{ backgroundColor: "#6c757d" }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  `w-full text-center px-4 py-1.5 rounded-lg font-medium text-sm text-white transition-all border-2 ${
+                    isActive ? "border-[#212529]" : "border-transparent hover:border-[#212529]"
+                  }`
+                }
+                style={{ backgroundColor: "#6c757d" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                Login
+              </NavLink>
+            )}
+          </div>
+        </div>
         </div>
       )}
     </nav>

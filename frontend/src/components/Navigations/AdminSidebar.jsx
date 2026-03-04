@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import showToast from "../Toast/CustomToast.jsx";
 
 const menuItems = [
   {
@@ -50,6 +52,16 @@ const linkClass = ({ isActive }) =>
   }`;
 
 function SidebarInner({ onClose }) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    if (onClose) onClose();
+    showToast.success("Logged out successfully.");
+    navigate("/");
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Logo + close button (mobile only) */}
@@ -94,11 +106,19 @@ function SidebarInner({ onClose }) {
         ))}
       </nav>
 
-      {/* Go to Home */}
-      <div className="px-3 py-4 border-t" style={{ borderColor: "#21252933" }}>
+      {/* Bottom actions */}
+      <div className="px-3 py-4 border-t flex flex-col gap-1" style={{ borderColor: "#21252933" }}>
+        {/* User info */}
+        {user && (
+          <div className="px-4 py-2 text-xs mb-1" style={{ color: "#21252999" }}>
+            Signed in as <span className="font-semibold" style={{ color: "#212529" }}>{user.name || user.email}</span>
+          </div>
+        )}
+
+        {/* Go to Home */}
         <Link
           to="/"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:underline underline-offset-4 transition-all"
+          className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:underline underline-offset-4 transition-all"
           style={{ color: "#212529" }}
           onClick={onClose}
         >
@@ -107,6 +127,18 @@ function SidebarInner({ onClose }) {
           </svg>
           Go to Home
         </Link>
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 text-sm font-medium w-full text-left hover:underline underline-offset-4 transition-all"
+          style={{ color: "#dc3545" }}
+        >
+          <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Logout
+        </button>
       </div>
     </div>
   );
@@ -119,8 +151,8 @@ export default function AdminSidebar() {
     <>
       {/* ── Desktop sidebar ── */}
       <aside
-        className="hidden md:flex flex-col w-64 min-h-screen flex-shrink-0 sticky top-0 self-start"
-        style={{ backgroundColor: "#adb5bd", minHeight: "100vh" }}
+        className="hidden md:flex flex-col w-64 flex-shrink-0 h-screen sticky top-0 overflow-y-auto"
+        style={{ backgroundColor: "#adb5bd" }}
       >
         <SidebarInner onClose={null} />
       </aside>
