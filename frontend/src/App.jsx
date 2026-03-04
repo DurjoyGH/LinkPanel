@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import PublicLayout from "./components/Layouts/PublicLayout";
 import AdminLayout from "./components/Layouts/AdminLayout";
@@ -14,6 +15,10 @@ import ScrollToTop from "./components/ScrollTop/ScrollTop";
 function App() {
   return (
     <AuthProvider>
+      <Toaster
+        position="top-right"
+        toastOptions={{ style: { fontFamily: "monospace" } }}
+      />
       <BrowserRouter>
         <ScrollToTop />
         <Routes>

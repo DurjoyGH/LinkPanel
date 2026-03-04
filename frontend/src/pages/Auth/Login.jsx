@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import showToast from "../../components/Toast/CustomToast.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -14,17 +15,17 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     try {
       const user = await login(email, password);
+      showToast.success("Welcome back!");
       if (user.role === "admin") {
         navigate("/admin", { replace: true });
       } else {
         navigate("/links", { replace: true });
       }
     } catch (err) {
-      setError(
+      showToast.error(
         err?.response?.data?.message || "Login failed. Please try again."
       );
     } finally {
@@ -107,19 +108,20 @@ export default function Login() {
             </Link>
           </div>
 
-          {error && (
-            <p className="text-xs text-center" style={{ color: "#dc3545" }}>
-              {error}
-            </p>
-          )}
-
           <button
             type="submit"
             disabled={loading}
             className="w-full py-2 rounded-lg font-semibold text-sm transition-opacity hover:opacity-85 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ backgroundColor: "#adb5bd", color: "#212529" }}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 size={15} className="animate-spin" />
+                Logging in...
+              </span>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
       </div>
