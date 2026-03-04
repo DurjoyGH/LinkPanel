@@ -1,14 +1,35 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // handle login logic
+    setError("");
+    setLoading(true);
+    try {
+      const user = await login(email, password);
+      if (user.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/links", { replace: true });
+      }
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "Login failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -17,7 +38,6 @@ export default function Login() {
         className="w-full max-w-md rounded-2xl shadow-md p-8"
         style={{ backgroundColor: "#e9ecef" }}
       >
-        {/* Logo */}
         <div className="flex justify-center mb-6">
           <img
             src="/link-panel.png"
@@ -34,13 +54,8 @@ export default function Login() {
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* Email */}
           <div className="flex flex-col gap-1">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium"
-              style={{ color: "#212529" }}
-            >
+            <label htmlFor="email" className="text-sm font-medium" style={{ color: "#212529" }}>
               Email
             </label>
             <input
@@ -55,13 +70,8 @@ export default function Login() {
             />
           </div>
 
-          {/* Password */}
           <div className="flex flex-col gap-1">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium"
-              style={{ color: "#212529" }}
-            >
+            <label htmlFor="password" className="text-sm font-medium" style={{ color: "#212529" }}>
               Password
             </label>
             <div className="relative">
@@ -87,7 +97,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Forgot Password */}
           <div className="flex justify-end">
             <Link
               to="/forgot-password"
@@ -98,13 +107,19 @@ export default function Login() {
             </Link>
           </div>
 
-          {/* Submit */}
+          {error && (
+            <p className="text-xs text-center" style={{ color: "#dc3545" }}>
+              {error}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full py-2 rounded-lg font-semibold text-sm transition-opacity hover:opacity-85"
+            disabled={loading}
+            className="w-full py-2 rounded-lg font-semibold text-sm transition-opacity hover:opacity-85 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ backgroundColor: "#adb5bd", color: "#212529" }}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
