@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import PublicLayout from "./components/Layouts/PublicLayout";
 import AdminLayout from "./components/Layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoute";
+import GuestRoute from "./components/ProtectedRoutes/GuestRoute";
 import Home from "./pages/Public/Home";
 import Links from "./pages/Public/Links";
 import Files from "./pages/Public/Files";
@@ -25,7 +26,11 @@ function App() {
           {/* Public routes — anyone can access */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
+
+            {/* Guest only — redirect away if already logged in */}
+            <Route element={<GuestRoute />}>
+              <Route path="/login" element={<Login />} />
+            </Route>
 
             {/* Logged-in users only */}
             <Route element={<ProtectedRoute />}>

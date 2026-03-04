@@ -1,26 +1,29 @@
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { addUser } from "../../services/adminApi";
+import showToast from "../../components/Toast/CustomToast.jsx";
 
 export default function AddUser() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
-    setSuccess("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
-      setError("All fields are required.");
-      return;
+    setLoading(true);
+    try {
+      const res = await addUser(form);
+      showToast.success(res.data.message || `User "${form.name}" added successfully.`);
+      setForm({ name: "", email: "", password: "" });
+    } catch (err) {
+      showToast.error(err?.response?.data?.message || "Failed to add user. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    // TODO: connect to API
-    setSuccess(`User "${form.name}" added successfully.`);
-    setForm({ name: "", email: "", password: "" });
   };
 
   return (
@@ -66,6 +69,7 @@ export default function AddUser() {
               placeholder="John Doe"
               value={form.name}
               onChange={handleChange}
+              required
               className="w-full px-4 py-2.5 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition"
               style={{ backgroundColor: "#dee2e6", color: "#212529" }}
             />
@@ -82,6 +86,7 @@ export default function AddUser() {
               placeholder="john@example.com"
               value={form.email}
               onChange={handleChange}
+              required
               className="w-full px-4 py-2.5 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition"
               style={{ backgroundColor: "#dee2e6", color: "#212529" }}
             />
@@ -99,6 +104,7 @@ export default function AddUser() {
                 placeholder="••••••••"
                 value={form.password}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-2.5 pr-16 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition"
                 style={{ backgroundColor: "#dee2e6", color: "#212529" }}
               />
@@ -114,21 +120,21 @@ export default function AddUser() {
             </div>
           </div>
 
-          {/* Feedback */}
-          {error && (
-            <p className="text-xs" style={{ color: "#dc3545" }}>{error}</p>
-          )}
-          {success && (
-            <p className="text-xs" style={{ color: "#198754" }}>{success}</p>
-          )}
-
           {/* Submit */}
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg font-semibold text-sm text-white hover:opacity-85 transition-opacity"
+            disabled={loading}
+            className="w-full py-2.5 rounded-lg font-semibold text-sm text-white transition-opacity hover:opacity-85 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ backgroundColor: "#6c757d" }}
           >
-            Add User
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 size={15} className="animate-spin" />
+                Adding User...
+              </span>
+            ) : (
+              "Add User"
+            )}
           </button>
         </form>
       </div>
