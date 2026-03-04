@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Links", to: "/links" },
   { label: "Files", to: "/files" },
 ];
+
+const linkClass = ({ isActive }) =>
+  `font-medium text-lg underline-offset-4 transition-all ${
+    isActive ? "underline" : "hover:underline"
+  }`;
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -28,14 +33,15 @@ export default function Navbar() {
           {/* Center Nav Links - Desktop */}
           <div className="hidden md:flex flex-1 justify-center items-center gap-8">
             {navLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.label}
                 to={link.to}
-                className="font-medium text-lg underline-offset-4 hover:underline transition-all"
+                end={link.to === "/"}
+                className={linkClass}
                 style={{ color: "#212529" }}
               >
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
           </div>
 
@@ -76,15 +82,16 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-4">
           {navLinks.map((link) => (
-            <Link
+            <NavLink
               key={link.label}
               to={link.to}
-              className="font-medium text-lg underline-offset-4 hover:underline transition-all"
+              end={link.to === "/"}
+              className={linkClass}
               style={{ color: "#212529" }}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
-            </Link>
+            </NavLink>
           ))}
           <Link
             to="/login"

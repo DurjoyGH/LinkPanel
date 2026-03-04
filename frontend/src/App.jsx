@@ -4,10 +4,12 @@ import Home from "./pages/Public/Home";
 import Links from "./pages/Public/Links";
 import Files from "./pages/Public/Files";
 import Login from "./pages/Auth/Login";
+import ScrollToTop from "./components/ScrollTop/ScrollTop";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
