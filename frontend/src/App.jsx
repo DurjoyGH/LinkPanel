@@ -6,6 +6,7 @@ import Links from "./pages/Public/Links";
 import Files from "./pages/Public/Files";
 import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Admin/Dashboard";
+import AddUser from "./pages/Admin/AddUser";
 import ScrollToTop from "./components/ScrollTop/ScrollTop";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="add-user" element={<AddUser />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

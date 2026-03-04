@@ -57,7 +57,7 @@ function SidebarInner({ onClose }) {
         className="flex items-center justify-between px-4 py-4 border-b"
         style={{ borderColor: "#21252933" }}
       >
-        <Link to="/" onClick={onClose} className="flex items-center gap-2">
+        <Link to="/admin" onClick={onClose} className="flex items-center gap-2">
           <img src="/link-panel.png" alt="LinkPanel" className="h-12 w-auto object-contain" />
           <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#212529" }}>
             Admin Panel
