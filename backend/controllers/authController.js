@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Link = require("../models/link");
 const bcrypt = require("bcrypt");
 const { generateToken, generateRefreshToken } = require("../services/jwt");
 
@@ -34,6 +35,9 @@ exports.login = async (req, res) => {
     const token = generateToken(tokenPayload);
     const refreshToken = generateRefreshToken({ id: user._id });
 
+    user.lastLogin = new Date();
+    await user.save();
+
     res.status(200).json({
       message: "Login successful!",
       user: {
@@ -42,6 +46,7 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,
+        lastLogin: user.lastLogin,
       },
       token: token,
       refreshToken: refreshToken,
@@ -50,7 +55,59 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: "Internal Server Error!" });
+  }
+};
 
+exports.getMe = async (req, res) => {
+  try {
+    const linksCount = await Link.countDocuments({ createdBy: req.user._id });
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role,
+        lastLogin: req.user.lastLogin,
+      },
+      stats: {
+        links: linksCount,
+        files: 0,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal Server Error!" });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Both current and new password are required." });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters." });
+    }
+
+    const user = await User.findById(req.user._id);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect." });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password changed successfully." });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Internal Server Error!" });
   }
 };

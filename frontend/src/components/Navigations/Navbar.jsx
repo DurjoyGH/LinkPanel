@@ -30,7 +30,7 @@ export default function Navbar() {
   const { isAuthenticated, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
-  const dashboardTo = isAdmin ? "/admin" : "/links";
+  const dashboardTo = isAdmin ? "/admin" : "/dashboard";
 
   const handleLogout = () => {
     logout();

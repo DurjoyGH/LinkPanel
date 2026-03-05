@@ -8,6 +8,7 @@ import GuestRoute from "./components/ProtectedRoutes/GuestRoute";
 import Home from "./pages/Public/Home";
 import Links from "./pages/Public/Links";
 import Files from "./pages/Public/Files";
+import UserDashboard from "./pages/Public/Dashboard";
 import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Admin/Dashboard";
 import AddUser from "./pages/Admin/AddUser";
@@ -34,6 +35,7 @@ function App() {
 
             {/* Logged-in users only */}
             <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<UserDashboard />} />
               <Route path="/links" element={<Links />} />
               <Route path="/files" element={<Files />} />
             </Route>
