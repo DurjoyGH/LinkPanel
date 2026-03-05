@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
       token: token,
       refreshToken: refreshToken,
       role: user.role,
-      redirectTo: user.role === "admin" ? "/admin/dashboard" : "/links",
+      redirectTo: user.role === "admin" ? "/admin" : "/links",
     });
   } catch (err) {
     console.error(err);

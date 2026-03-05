@@ -8,7 +8,7 @@ export default function GuestRoute() {
   if (loading) return null;
 
   if (isAuthenticated) {
-    return <Navigate to={isAdmin ? "/admin" : "/"} replace />;
+    return <Navigate to={isAdmin ? "/admin" : "/links"} replace />;
   }
 
   return <Outlet />;

@@ -22,7 +22,7 @@ export default function Login() {
       if (user.role === "admin") {
         navigate("/admin", { replace: true });
       } else {
-        navigate("/dashboard", { replace: true });
+        navigate("/links", { replace: true });
       }
     } catch (err) {
       showToast.error(
