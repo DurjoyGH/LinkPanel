@@ -5,9 +5,9 @@ const connectDB = require("../configs/db");
 const User = require("../models/user");
 
 const SUPER_ADMIN = {
-  name: "LinkPanel Admin",
-  email: "admin.link.panel@gmail.com",
-  password: "admin@link@panel",
+  name: "",
+  email: "",
+  password: "",
   role: "admin",
   isVerified: true,
 };

@@ -9,11 +9,11 @@ const newUserEmail = ({ name, email, password }) => ({
       <p>Your account has been created by an administrator. You can now log in to LinkPanel using the credentials below.</p>
       <div class="info-box">
         <div class="row">
-          <span class="label">Email</span>
+          <span class="label">Email:</span>
           <span class="value">${email}</span>
         </div>
         <div class="row">
-          <span class="label">Password</span>
+          <span class="label">Password:</span>
           <span class="value">${password}</span>
         </div>
       </div>
