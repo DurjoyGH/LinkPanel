@@ -20,7 +20,7 @@ export default function Footer() {
               <img
                 src="/link-panel.png"
                 alt="LinkPanel Logo"
-                className="h-16 w-auto object-contain"
+                className="h-20 w-auto object-contain"
               />
             </Link>
             <p className="text-sm leading-relaxed" style={{ color: "#212529" }}>
@@ -51,16 +51,16 @@ export default function Footer() {
               Developer
             </h4>
             <a
-              href="https://github.com"
+              href="https://tarinprosadghosh.me"
               target="_blank"
               rel="noreferrer"
               className="text-sm underline-offset-4 hover:underline transition-all w-fit"
               style={{ color: "#212529" }}
             >
-              GitHub
+              Portfolio
             </a>
             <a
-              href="mailto:dev@linkpanel.app"
+              href="mailto:tarinprosadghosh@gmail.com"
               className="text-sm underline-offset-4 hover:underline transition-all w-fit"
               style={{ color: "#212529" }}
             >
