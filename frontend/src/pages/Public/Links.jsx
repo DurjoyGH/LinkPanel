@@ -7,6 +7,7 @@ export default function Links() {
   const [links, setLinks] = useState([]);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+  const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -17,6 +18,7 @@ export default function Links() {
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editUrl, setEditUrl] = useState("");
+  const [editComment, setEditComment] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
@@ -38,16 +40,17 @@ export default function Links() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !url.trim()) {
-      setError("Both fields are required.");
+      setError("Please fill up required fields.");
       return;
     }
     setError("");
     setSubmitting(true);
     try {
-      const res = await createLink({ name: name.trim(), url: url.trim() });
+      const res = await createLink({ name: name.trim(), url: url.trim(), comment: comment.trim() });
       setLinks([res.data.link, ...links]);
       setName("");
       setUrl("");
+      setComment("");
       showToast.success("Link saved successfully!");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to save link.");
@@ -60,12 +63,14 @@ export default function Links() {
     setEditingId(link._id);
     setEditName(link.name);
     setEditUrl(link.url);
+    setEditComment(link.comment || "");
   };
 
   const handleEditCancel = () => {
     setEditingId(null);
     setEditName("");
     setEditUrl("");
+    setEditComment("");
   };
 
   const handleUpdate = async (id) => {
@@ -75,7 +80,7 @@ export default function Links() {
     }
     setUpdatingId(id);
     try {
-      const res = await updateLink(id, { name: editName.trim(), url: editUrl.trim() });
+      const res = await updateLink(id, { name: editName.trim(), url: editUrl.trim(), comment: editComment.trim() });
       setLinks(links.map((l) => (l._id === id ? res.data.link : l)));
       setEditingId(null);
       showToast.success("Link updated successfully!");
@@ -125,7 +130,7 @@ export default function Links() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium" style={{ color: "#212529" }}>
-              Link Name
+              Link Name <span style={{ color: "#dc3545" }}>*</span>
             </label>
             <input
               type="text"
@@ -138,7 +143,7 @@ export default function Links() {
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium" style={{ color: "#212529" }}>
-              URL
+              URL <span style={{ color: "#dc3545" }}>*</span>
             </label>
             <input
               type="url"
@@ -146,6 +151,19 @@ export default function Links() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="w-full px-4 py-2 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition"
+              style={{ backgroundColor: "#dee2e6", color: "#212529" }}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium" style={{ color: "#212529" }}>
+              Comment
+            </label>
+            <textarea
+              placeholder="Optional note about this link"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={3}
+              className="w-full px-4 py-2 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition resize-none"
               style={{ backgroundColor: "#dee2e6", color: "#212529" }}
             />
           </div>
@@ -199,6 +217,14 @@ export default function Links() {
                     className="w-full px-3 py-2 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition"
                     style={{ backgroundColor: "#dee2e6", color: "#212529" }}
                   />
+                  <textarea
+                    value={editComment}
+                    onChange={(e) => setEditComment(e.target.value)}
+                    placeholder="Comment (optional)"
+                    rows={3}
+                    className="w-full px-3 py-2 rounded-lg border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition resize-none"
+                    style={{ backgroundColor: "#dee2e6", color: "#212529" }}
+                  />
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleUpdate(link._id)}
@@ -227,6 +253,11 @@ export default function Links() {
                     <span className="text-xs truncate" style={{ color: "#6c757d" }}>
                       {link.url}
                     </span>
+                    {link.comment && (
+                      <span className="text-xs truncate mt-0.5 italic" style={{ color: "#868e96" }}>
+                        💬 {link.comment}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button

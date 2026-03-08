@@ -3,13 +3,13 @@ const Link = require("../models/link");
 // POST /api/links — Create a new link
 const createLink = async (req, res) => {
   try {
-    const { name, url } = req.body;
+    const { name, url, comment } = req.body;
 
     if (!name || !url) {
       return res.status(400).json({ success: false, message: "Name and URL are required." });
     }
 
-    const link = await Link.create({ name, url, createdBy: req.user._id });
+    const link = await Link.create({ name, url, comment: comment?.trim() || "", createdBy: req.user._id });
 
     res.status(201).json({ success: true, message: "Link created successfully.", link });
   } catch (error) {
@@ -55,7 +55,7 @@ const getLinkById = async (req, res) => {
 // PUT /api/links/:id — Update a link (owner or admin)
 const updateLink = async (req, res) => {
   try {
-    const { name, url } = req.body;
+    const { name, url, comment } = req.body;
 
     const link = await Link.findById(req.params.id);
 
@@ -70,6 +70,7 @@ const updateLink = async (req, res) => {
 
     if (name) link.name = name;
     if (url) link.url = url;
+    if (comment !== undefined) link.comment = comment.trim();
 
     await link.save();
 
