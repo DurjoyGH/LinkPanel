@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getLinks, createLink, updateLink, deleteLink } from "../../services/publicApi";
 import showToast from "../../components/Toast/CustomToast";
+import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 export default function Links() {
   const [links, setLinks] = useState([]);
@@ -166,9 +167,7 @@ export default function Links() {
 
       {/* Links List */}
       {loading ? (
-        <p className="text-sm text-center py-10" style={{ color: "#6c757d" }}>
-          Loading links...
-        </p>
+        <LoadingSpinner fullPage text="Loading links..." />
       ) : links.length === 0 ? (
         <p className="text-sm text-center py-10" style={{ color: "#6c757d" }}>
           No links saved yet. Add your first one above!

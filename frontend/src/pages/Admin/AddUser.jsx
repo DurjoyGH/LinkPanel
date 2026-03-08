@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { addUser } from "../../services/adminApi";
 import showToast from "../../components/Toast/CustomToast.jsx";
+import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 export default function AddUser() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -129,7 +129,7 @@ export default function AddUser() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <Loader2 size={15} className="animate-spin" />
+                <LoadingSpinner size="sm" />
                 Adding User...
               </span>
             ) : (

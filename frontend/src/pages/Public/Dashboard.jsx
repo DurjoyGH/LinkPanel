@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getMe, changePassword } from "../../services/authApi";
 import showToast from "../../components/Toast/CustomToast.jsx";
+import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 export default function UserDashboard() {
   const { user: authUser } = useAuth();
@@ -118,7 +119,7 @@ export default function UserDashboard() {
           Statistics
         </h2>
         {statsLoading ? (
-          <p className="text-sm" style={{ color: "#6c757d" }}>Loading stats...</p>
+          <LoadingSpinner size="sm" text="Loading stats..." />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {statCards.map((s) => (
