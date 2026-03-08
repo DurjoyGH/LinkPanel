@@ -13,6 +13,9 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:3000",
+  "https://link-panel-silk.vercel.app",
+  "https://link-panel-backend.vercel.app",
+  "https://link-panel-backend.vercel.app/api"
 ];
 
 // --- CORS Middleware ---
