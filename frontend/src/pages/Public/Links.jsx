@@ -219,7 +219,7 @@ export default function Links() {
                 </div>
               ) : (
                 /* ── View mode ── */
-                <div className="flex items-center justify-between gap-4 px-5 py-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4">
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <span className="font-semibold text-sm truncate" style={{ color: "#212529" }}>
                       {link.name}
