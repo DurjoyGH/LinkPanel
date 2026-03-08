@@ -21,6 +21,9 @@ export default function Links() {
   const [editComment, setEditComment] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
+  // Comment modal state
+  const [commentModalLink, setCommentModalLink] = useState(null);
+
   useEffect(() => {
     fetchLinks();
   }, []);
@@ -253,11 +256,13 @@ export default function Links() {
                     <span className="text-xs truncate" style={{ color: "#6c757d" }}>
                       {link.url}
                     </span>
-                    {link.comment && (
-                      <span className="text-xs truncate mt-0.5 italic" style={{ color: "#868e96" }}>
-                        💬 {link.comment}
-                      </span>
-                    )}
+                    <button
+                      onClick={() => setCommentModalLink(link)}
+                      className="text-xs underline underline-offset-2 text-left w-fit hover:opacity-70 transition-opacity cursor-pointer mt-2"
+                      style={{ color: "#6c757d" }}
+                    >
+                      Show Comment
+                    </button>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
@@ -306,6 +311,63 @@ export default function Links() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Comment Modal */}
+      {commentModalLink && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+          onClick={() => setCommentModalLink(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl shadow-xl p-6 relative"
+            style={{ backgroundColor: "#f8f9fa" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setCommentModalLink(null)}
+              className="absolute top-4 right-4 p-1 rounded-lg hover:opacity-70 transition-opacity"
+              style={{ color: "#6c757d" }}
+              title="Close"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {/* Modal header */}
+            <h3 className="text-base font-semibold mb-1 pr-6" style={{ color: "#212529" }}>
+              {commentModalLink.name}
+            </h3>
+            <a
+              href={commentModalLink.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs underline break-all"
+              style={{ color: "#6c757d" }}
+            >
+              {commentModalLink.url}
+            </a>
+
+            {/* Divider */}
+            <hr className="my-4" style={{ borderColor: "#dee2e6" }} />
+
+            {/* Comment content */}
+            <p className="text-sm font-medium mb-2" style={{ color: "#495057" }}>💬 Comment</p>
+            {commentModalLink.comment ? (
+              <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "#212529" }}>
+                {commentModalLink.comment}
+              </p>
+            ) : (
+              <p className="text-sm italic" style={{ color: "#adb5bd" }}>
+                No comment added for this link.
+              </p>
+            )}
+          </div>
         </div>
       )}
 
