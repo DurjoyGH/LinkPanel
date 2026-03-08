@@ -17,10 +17,10 @@ const createLink = async (req, res) => {
   }
 };
 
-// GET /api/links — Get links (admin sees all, user sees own)
+// GET /api/links — Get links
 const getLinks = async (req, res) => {
   try {
-    const filter = req.user.role === "admin" ? {} : { createdBy: req.user._id };
+   const filter = { createdBy: req.user._id };
 
     const links = await Link.find(filter)
       .populate("createdBy", "name email role")
