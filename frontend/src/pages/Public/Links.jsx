@@ -10,6 +10,7 @@ export default function Links() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
 
   // Edit state
   const [editingId, setEditingId] = useState(null);
@@ -82,6 +83,13 @@ export default function Links() {
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleCopy = (link) => {
+    navigator.clipboard.writeText(link.url).then(() => {
+      setCopiedId(link._id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
   };
 
   const handleDelete = async (id) => {
@@ -222,6 +230,23 @@ export default function Links() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => handleCopy(link)}
+                      title="Copy link"
+                      className="p-1.5 rounded-lg hover:opacity-85 transition-opacity"
+                      style={{ backgroundColor: "#dee2e6", color: copiedId === link._id ? "#198754" : "#6c757d" }}
+                    >
+                      {copiedId === link._id ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      )}
+                    </button>
                     <a
                       href={link.url}
                       target="_blank"
