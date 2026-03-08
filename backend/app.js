@@ -4,6 +4,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const linkRoutes = require("./routes/linkRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/links", linkRoutes);
+app.use("/api/files", fileRoutes);
 
 
 app.get("/", (req, res) => {
@@ -54,6 +56,19 @@ app.get("/", (req, res) => {
 
 // --- Global Error Handler ---
 app.use((err, req, res, next) => {
+  // Handle Multer-specific errors
+  if (err.name === "MulterError") {
+    const msg = err.code === "LIMIT_FILE_SIZE"
+      ? "File is too large. Maximum allowed size is 10 MB."
+      : err.message;
+    return res.status(400).json({ success: false, message: msg });
+  }
+
+  // Handle file-type rejection from fileFilter
+  if (err.message?.startsWith("File type")) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
+
   console.error("Error occurred:", {
     message: err.message,
     stack: err.stack,
