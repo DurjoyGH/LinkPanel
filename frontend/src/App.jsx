@@ -8,6 +8,7 @@ import GuestRoute from "./components/ProtectedRoutes/GuestRoute";
 import Home from "./pages/Public/Home";
 import Links from "./pages/Public/Links";
 import Files from "./pages/Public/Files";
+import SharedLinks from "./pages/Public/Share";
 import UserDashboard from "./pages/Public/Dashboard";
 import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Admin/Dashboard";
@@ -27,6 +28,7 @@ function App() {
           {/* Public routes — anyone can access */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/share/:token" element={<SharedLinks />} />
 
             {/* Guest only — redirect away if already logged in */}
             <Route element={<GuestRoute />}>

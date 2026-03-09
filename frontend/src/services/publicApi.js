@@ -15,3 +15,5 @@ export const uploadFile = (formData, onUploadProgress) =>
     headers: { "Content-Type": "multipart/form-data" },
     onUploadProgress,
   });
+export const createShare = (linkIds)  => api.post("/share", { linkIds });
+export const getShare    = (token)    => api.get(`/share/${token}`);

@@ -4,6 +4,7 @@ import {
   createLink,
   updateLink,
   deleteLink,
+  createShare,
 } from "../../services/publicApi";
 import showToast from "../../components/Toast/CustomToast";
 import LoadingSpinner from "../../components/Loading/LoadingSpinner";
@@ -26,6 +27,13 @@ export default function Links() {
   const [updatingId, setUpdatingId] = useState(null);
 
   const [commentModalLink, setCommentModalLink] = useState(null);
+
+  // Share state
+  const [shareOpen, setShareOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [sharing, setSharing] = useState(false);
+  const [sharedUrl, setSharedUrl] = useState("");
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
     fetchLinks();
@@ -123,6 +131,44 @@ export default function Links() {
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const openShareModal = () => {
+    setSelectedIds(links.map((l) => l._id));
+    setSharedUrl("");
+    setShareCopied(false);
+    setShareOpen(true);
+  };
+
+  const toggleSelectId = (id) =>
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+
+  const handleShareDone = async () => {
+    if (selectedIds.length === 0) {
+      showToast.error("Select at least one link.");
+      return;
+    }
+    setSharing(true);
+    try {
+      const res = await createShare(selectedIds);
+      const url = `${window.location.origin}/share/${res.data.token}`;
+      setSharedUrl(url);
+    } catch (err) {
+      showToast.error(
+        err.response?.data?.message || "Failed to create share link.",
+      );
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const handleCopyShareUrl = () => {
+    navigator.clipboard.writeText(sharedUrl).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
   };
 
   return (
@@ -358,6 +404,190 @@ export default function Links() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ── Share FAB ── */}
+      {links.length > 0 && (
+        <div className="flex justify-center mt-10">
+          <button
+            onClick={openShareModal}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white hover:opacity-85 transition-opacity shadow-sm"
+            style={{ backgroundColor: "#6c757d" }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg>
+            Share My Links
+          </button>
+        </div>
+      )}
+
+      {/* ── Share Modal ── */}
+      {shareOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+          onClick={() => {
+            setShareOpen(false);
+            setSharedUrl("");
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl shadow-xl p-6 relative flex flex-col gap-4"
+            style={{ backgroundColor: "#f8f9fa" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <h3
+                className="text-base font-semibold"
+                style={{ color: "#212529" }}
+              >
+                Share Links
+              </h3>
+              <button
+                onClick={() => {
+                  setShareOpen(false);
+                  setSharedUrl("");
+                }}
+                className="p-1 rounded-lg hover:opacity-70 transition-opacity"
+                style={{ color: "#6c757d" }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Select All */}
+            {!sharedUrl && (
+              <>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length === links.length}
+                    onChange={(e) =>
+                      setSelectedIds(
+                        e.target.checked ? links.map((l) => l._id) : [],
+                      )
+                    }
+                    className="w-4 h-4 accent-[#6c757d]"
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#495057" }}
+                  >
+                    Select All
+                  </span>
+                </label>
+
+                <hr style={{ borderColor: "#dee2e6" }} />
+
+                {/* Links checklist */}
+                <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
+                  {links.map((link) => (
+                    <label
+                      key={link._id}
+                      className="flex items-center gap-3 cursor-pointer select-none rounded-lg px-3 py-2 transition-colors hover:bg-[#e9ecef]"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(link._id)}
+                        onChange={() => toggleSelectId(link._id)}
+                        className="w-4 h-4 flex-shrink-0 accent-[#6c757d]"
+                      />
+                      <div className="flex flex-col min-w-0">
+                        <span
+                          className="text-sm font-semibold truncate"
+                          style={{ color: "#212529" }}
+                        >
+                          {link.name}
+                        </span>
+                        <span
+                          className="text-xs truncate"
+                          style={{ color: "#6c757d" }}
+                        >
+                          {link.url}
+                        </span>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleShareDone}
+                  disabled={sharing || selectedIds.length === 0}
+                  className="w-full py-2 rounded-xl font-semibold text-sm text-white hover:opacity-85 transition-opacity disabled:opacity-50"
+                  style={{ backgroundColor: "#6c757d" }}
+                >
+                  {sharing
+                    ? "Generating..."
+                    : `Done · ${selectedIds.length} link${selectedIds.length !== 1 ? "s" : ""} selected`}
+                </button>
+              </>
+            )}
+
+            {/* Generated URL */}
+            {sharedUrl && (
+              <div className="flex flex-col gap-3">
+                <p className="text-sm" style={{ color: "#495057" }}>
+                  ✅ Share link generated! Anyone with this link can view your
+                  selected links.
+                </p>
+                <div
+                  className="flex items-center gap-2 rounded-xl px-3 py-2"
+                  style={{ backgroundColor: "#e9ecef" }}
+                >
+                  <span
+                    className="flex-1 text-xs break-all"
+                    style={{ color: "#212529" }}
+                  >
+                    {sharedUrl}
+                  </span>
+                  <button
+                    onClick={handleCopyShareUrl}
+                    className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-white hover:opacity-85 transition-opacity"
+                    style={{
+                      backgroundColor: shareCopied ? "#198754" : "#6c757d",
+                    }}
+                  >
+                    {shareCopied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+                <button
+                  onClick={() => setSharedUrl("")}
+                  className="self-start text-xs underline underline-offset-2 hover:opacity-70 transition-opacity"
+                  style={{ color: "#6c757d" }}
+                >
+                  ← Change selection
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

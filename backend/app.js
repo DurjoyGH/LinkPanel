@@ -5,6 +5,7 @@ const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const linkRoutes = require("./routes/linkRoutes");
 const fileRoutes = require("./routes/fileRoutes");
+const shareRoutes = require("./routes/shareRoutes");
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/links", linkRoutes);
 app.use("/api/files", fileRoutes);
+app.use("/api/share", shareRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is Running!");
