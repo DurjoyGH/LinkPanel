@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Link = require("../models/link");
+const File = require("../models/file");
 const bcrypt = require("bcrypt");
 const { generateToken, generateRefreshToken } = require("../services/jwt");
 
@@ -62,6 +63,7 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const linksCount = await Link.countDocuments({ createdBy: req.user._id });
+    const filesCount = await File.countDocuments({ createdBy: req.user._id });
 
     res.status(200).json({
       success: true,
@@ -74,7 +76,7 @@ exports.getMe = async (req, res) => {
       },
       stats: {
         links: linksCount,
-        files: 0,
+        files: filesCount,
       },
     });
   } catch (err) {

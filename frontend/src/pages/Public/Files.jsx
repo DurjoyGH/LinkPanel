@@ -266,11 +266,11 @@ export default function Files() {
           </div>
 
           {/* Progress bar */}
-          {submitting && uploadProgress > 0 && (
+          {submitting && (
             <div className="w-full rounded-full overflow-hidden h-2" style={{ backgroundColor: "#dee2e6" }}>
               <div
-                className="h-2 rounded-full transition-all duration-200"
-                style={{ width: `${uploadProgress}%`, backgroundColor: "#6c757d" }}
+                className="h-2 rounded-full w-16"
+                style={{ backgroundColor: "#6c757d", animation: "slideLoop 1.1s linear infinite" }}
               />
             </div>
           )}
@@ -283,7 +283,7 @@ export default function Files() {
             className="self-start px-6 py-2 rounded-lg font-semibold text-sm text-white hover:opacity-85 transition-opacity disabled:opacity-50"
             style={{ backgroundColor: "#6c757d" }}
           >
-            {submitting ? `Uploading${uploadProgress ? ` ${uploadProgress}%` : "…"}` : "Upload File"}
+            {submitting ? "Uploading..." : "Upload File"}
           </button>
         </form>
       </div>
