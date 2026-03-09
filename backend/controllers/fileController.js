@@ -14,7 +14,7 @@ const uploadFile = async (req, res) => {
 
     // Build a unique storage path: userId/timestamp-originalname
     const sanitizedName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const storagePath = `${req.user._id}/${Date.now()}-${sanitizedName}`;
+    const storagePath = `${req.user._id}/${Date.now()}/${sanitizedName}`;
     const ext = req.file.originalname.split(".").pop().toLowerCase();
 
     console.log(`Uploading file: ${req.file.originalname}, size: ${req.file.size}, path: ${storagePath}`);
