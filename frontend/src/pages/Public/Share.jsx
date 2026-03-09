@@ -164,7 +164,7 @@ export default function SharedLinks() {
             className="mt-12 rounded-2xl px-6 py-8 flex flex-col items-center gap-3 text-center shadow-sm"
             style={{ backgroundColor: "#e9ecef" }}
           >
-            <span className="text-3xl">🚀</span>
+            <span className="text-3xl">�</span>
             <h2 className="text-lg font-bold" style={{ color: "#212529" }}>
               Want to save and share your own links?
             </h2>
@@ -174,11 +174,15 @@ export default function SharedLinks() {
             </p>
             <button
               disabled
-              className="mt-2 px-7 py-2.5 rounded-xl font-semibold text-sm text-white opacity-60 cursor-not-allowed"
-              style={{ backgroundColor: "#6c757d" }}
               title="Coming soon"
+              className="mt-2 px-8 py-2.5 rounded-xl font-bold text-sm text-white cursor-not-allowed select-none"
+              style={{
+                backgroundColor: "#ff5722",
+                animation: "jerk 1.4s ease-in-out infinite, fireGlow 1.6s ease-in-out infinite",
+                border: "none",
+              }}
             >
-              Join Now
+              🔥 Join Now 🔥
             </button>
           </div>
         </>
