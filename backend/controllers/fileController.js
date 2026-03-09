@@ -1,14 +1,5 @@
-const cloudinary = require("../configs/cloudinary");
+const supabase = require("../configs/supabase");
 const File = require("../models/file");
-
-const uploadToCloudinary = (buffer, options) =>
-  new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
-      if (error) return reject(error);
-      resolve(result);
-    });
-    stream.end(buffer);
-  });
 
 const uploadFile = async (req, res) => {
   try {
@@ -21,27 +12,37 @@ const uploadFile = async (req, res) => {
       return res.status(400).json({ success: false, message: "File name is required." });
     }
 
-    const isImage = req.file.mimetype.startsWith("image/");
-    const resourceType = isImage ? "image" : "raw";
+    // Build a unique storage path: userId/timestamp-originalname
+    const sanitizedName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const storagePath = `${req.user._id}/${Date.now()}-${sanitizedName}`;
+    const ext = req.file.originalname.split(".").pop().toLowerCase();
 
-    console.log(`Uploading file: ${req.file.originalname}, type: ${resourceType}, size: ${req.file.size}`);
+    console.log(`Uploading file: ${req.file.originalname}, size: ${req.file.size}, path: ${storagePath}`);
 
-    const result = await uploadToCloudinary(req.file.buffer, {
-      resource_type: resourceType,
-      folder: "LinkPanel Files",
-      public_id: req.file.originalname,
-      overwrite: false,
-    });
+    const { error: uploadError } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .upload(storagePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false,
+      });
 
-    console.log(`Cloudinary upload successful. Public ID: ${result.public_id}`);
+    if (uploadError) {
+      console.error("❌ Supabase upload error:", uploadError);
+      return res.status(500).json({ success: false, message: uploadError.message });
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .getPublicUrl(storagePath);
+
+    console.log(`Supabase upload successful. Public URL: ${publicUrl}`);
 
     const file = await File.create({
       name: name.trim(),
       originalName: req.file.originalname,
-      url: result.secure_url,
-      publicId: result.public_id,
-      resourceType: result.resource_type,
-      format: result.format || "",
+      url: publicUrl,
+      storagePath,
+      format: ext,
       size: req.file.size,
       mimeType: req.file.mimetype,
       comment: comment?.trim() || "",
@@ -99,8 +100,15 @@ const deleteFile = async (req, res) => {
       return res.status(403).json({ success: false, message: "Access denied." });
     }
 
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(file.publicId, { resource_type: file.resourceType });
+    // Delete from Supabase Storage
+    const { error: storageError } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .remove([file.storagePath]);
+
+    if (storageError) {
+      console.error("❌ Supabase delete error:", storageError);
+      return res.status(500).json({ success: false, message: storageError.message });
+    }
 
     await file.deleteOne();
 

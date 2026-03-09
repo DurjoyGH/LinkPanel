@@ -26,10 +26,6 @@ const getFileIcon = (mimeType = "") => {
   return "📁";
 };
 
-// Inject Cloudinary's fl_attachment flag so the browser always downloads
-// the file instead of opening it inline (critical for PDFs cross-origin).
-const getDownloadUrl = (url) => url.replace("/upload/", "/upload/fl_attachment/");
-
 const ACCEPTED =
   ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip," +
   ".jpg,.jpeg,.png,.gif,.webp,.svg";
@@ -367,7 +363,7 @@ export default function Files() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                     <button
-                      onClick={() => handleDownload(getDownloadUrl(file.url), file.originalName)}
+                      onClick={() => handleDownload(file.url, file.originalName)}
                       className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white hover:opacity-85 transition-opacity"
                       style={{ backgroundColor: "#adb5bd" }}
                     >

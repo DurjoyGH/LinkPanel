@@ -4,9 +4,8 @@ const fileSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },       
     originalName: { type: String, required: true, trim: true }, 
-    url: { type: String, required: true },                      
-    publicId: { type: String, required: true },                 
-    resourceType: { type: String, required: true },             
+    url: { type: String, required: true },
+    storagePath: { type: String, required: true },
     format: { type: String, default: "" },                      
     size: { type: Number, required: true },                  
     mimeType: { type: String, required: true },
