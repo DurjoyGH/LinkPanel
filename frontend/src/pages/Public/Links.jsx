@@ -35,11 +35,21 @@ export default function Links() {
   const [sharedUrl, setSharedUrl] = useState("");
   const [shareCopied, setShareCopied] = useState(false);
 
+  // Search
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredLinks = searchQuery.trim()
+    ? links.filter(
+        (l) =>
+          l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          l.url.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : links;
+
   // Pagination
   const PAGE_SIZE = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(links.length / PAGE_SIZE));
-  const paginatedLinks = links.slice(
+  const totalPages = Math.max(1, Math.ceil(filteredLinks.length / PAGE_SIZE));
+  const paginatedLinks = filteredLinks.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
@@ -76,6 +86,7 @@ export default function Links() {
       });
       setLinks([res.data.link, ...links]);
       setCurrentPage(1);
+      setSearchQuery("");
       setName("");
       setUrl("");
       setComment("");
@@ -258,12 +269,70 @@ export default function Links() {
         </form>
       </div>
 
+      {/* Search Bar */}
+      {!loading && links.length > 0 && (
+        <div className="relative mb-5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#adb5bd"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by name or URL…"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border-0 outline-none text-sm focus:ring-2 focus:ring-[#adb5bd] transition"
+            style={{ backgroundColor: "#e9ecef", color: "#212529" }}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setCurrentPage(1);
+              }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:opacity-70 transition-opacity"
+              style={{ color: "#6c757d" }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Links List */}
       {loading ? (
         <LoadingSpinner fullPage text="Loading links..." />
       ) : links.length === 0 ? (
         <p className="text-sm text-center py-10" style={{ color: "#6c757d" }}>
           No links saved yet. Add your first one above!
+        </p>
+      ) : filteredLinks.length === 0 ? (
+        <p className="text-sm text-center py-10" style={{ color: "#6c757d" }}>
+          No links match your search.
         </p>
       ) : (
         <div className="flex flex-col gap-3">
