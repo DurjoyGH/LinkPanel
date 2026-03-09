@@ -1,7 +1,6 @@
 const cloudinary = require("../configs/cloudinary");
 const File = require("../models/file");
 
-// ── Helper: upload buffer → Cloudinary ──────────────────────────────────────
 const uploadToCloudinary = (buffer, options) =>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
@@ -11,7 +10,6 @@ const uploadToCloudinary = (buffer, options) =>
     stream.end(buffer);
   });
 
-// ── POST /api/files/upload ───────────────────────────────────────────────────
 const uploadFile = async (req, res) => {
   try {
     if (!req.file) {
@@ -26,12 +24,16 @@ const uploadFile = async (req, res) => {
     const isImage = req.file.mimetype.startsWith("image/");
     const resourceType = isImage ? "image" : "raw";
 
+    console.log(`Uploading file: ${req.file.originalname}, type: ${resourceType}, size: ${req.file.size}`);
+
     const result = await uploadToCloudinary(req.file.buffer, {
       resource_type: resourceType,
       folder: "LinkPanel Files",
-      use_filename: true,
-      unique_filename: true,
+      public_id: req.file.originalname,
+      overwrite: false,
     });
+
+    console.log(`Cloudinary upload successful. Public ID: ${result.public_id}`);
 
     const file = await File.create({
       name: name.trim(),
@@ -46,13 +48,14 @@ const uploadFile = async (req, res) => {
       createdBy: req.user._id,
     });
 
+    console.log(`File saved to DB with ID: ${file._id}`);
     res.status(201).json({ success: true, message: "File uploaded successfully.", file });
   } catch (error) {
+    console.error("❌ Upload error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-// ── GET /api/files ───────────────────────────────────────────────────────────
+ 
 const getFiles = async (req, res) => {
   try {
     const files = await File.find({ createdBy: req.user._id })
@@ -65,7 +68,6 @@ const getFiles = async (req, res) => {
   }
 };
 
-// ── GET /api/files/:id ───────────────────────────────────────────────────────
 const getFileById = async (req, res) => {
   try {
     const file = await File.findById(req.params.id).populate("createdBy", "name email role");
@@ -84,7 +86,7 @@ const getFileById = async (req, res) => {
   }
 };
 
-// ── DELETE /api/files/:id ────────────────────────────────────────────────────
+
 const deleteFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -108,7 +110,6 @@ const deleteFile = async (req, res) => {
   }
 };
 
-// ── PUT /api/files/:id ───────────────────────────────────────────────────────
 const updateFile = async (req, res) => {
   try {
     const { name, comment } = req.body;
