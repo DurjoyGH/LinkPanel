@@ -26,7 +26,7 @@ export default function Login() {
       }
     } catch (err) {
       showToast.error(
-        err?.response?.data?.message || "Login failed. Please try again."
+        err?.response?.data?.message || "Login failed. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -56,7 +56,11 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium" style={{ color: "#212529" }}>
+            <label
+              htmlFor="email"
+              className="text-sm font-medium"
+              style={{ color: "#212529" }}
+            >
               Email
             </label>
             <input
@@ -72,7 +76,11 @@ export default function Login() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium" style={{ color: "#212529" }}>
+            <label
+              htmlFor="password"
+              className="text-sm font-medium"
+              style={{ color: "#212529" }}
+            >
               Password
             </label>
             <div className="relative">

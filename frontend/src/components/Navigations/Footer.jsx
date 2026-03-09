@@ -10,10 +10,8 @@ export default function Footer() {
   return (
     <footer className="w-full" style={{ backgroundColor: "#adb5bd" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
         {/* Top Section */}
         <div className="flex flex-col md:flex-row justify-between gap-10 pb-8 border-b border-[#212529]/20">
-
           {/* Brand Block */}
           <div className="flex flex-col gap-3 max-w-xs">
             <Link to="/">
@@ -24,13 +22,17 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm leading-relaxed" style={{ color: "#212529" }}>
-              Paste your link and access it remotely — anytime, anywhere. Store, manage and share your links &amp; files with ease.
+              Paste your link and access it remotely — anytime, anywhere. Store,
+              manage and share your links &amp; files with ease.
             </p>
           </div>
 
           {/* Navigation */}
           <div className="flex flex-col gap-3">
-            <h4 className="font-semibold text-base" style={{ color: "#212529" }}>
+            <h4
+              className="font-semibold text-base"
+              style={{ color: "#212529" }}
+            >
               Navigation
             </h4>
             {navLinks.map((link) => (
@@ -47,7 +49,10 @@ export default function Footer() {
 
           {/* Developer */}
           <div className="flex flex-col gap-3">
-            <h4 className="font-semibold text-base" style={{ color: "#212529" }}>
+            <h4
+              className="font-semibold text-base"
+              style={{ color: "#212529" }}
+            >
               Developer
             </h4>
             <a
@@ -81,7 +86,6 @@ export default function Footer() {
             Built with ❤️ by the Durjoy
           </p>
         </div>
-
       </div>
     </footer>
   );

@@ -16,7 +16,7 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
   "https://link-panel-silk.vercel.app",
   "https://link-panel-backend.vercel.app",
-  "https://link-panel-backend.vercel.app/api"
+  "https://link-panel-backend.vercel.app/api",
 ];
 
 // --- CORS Middleware ---
@@ -49,18 +49,18 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/links", linkRoutes);
 app.use("/api/files", fileRoutes);
 
-
 app.get("/", (req, res) => {
-    res.send("API is Running!")
-})
+  res.send("API is Running!");
+});
 
 // --- Global Error Handler ---
 app.use((err, req, res, next) => {
   // Handle Multer-specific errors
   if (err.name === "MulterError") {
-    const msg = err.code === "LIMIT_FILE_SIZE"
-      ? "File is too large. Maximum allowed size is 10 MB."
-      : err.message;
+    const msg =
+      err.code === "LIMIT_FILE_SIZE"
+        ? "File is too large. Maximum allowed size is 10 MB."
+        : err.message;
     return res.status(400).json({ success: false, message: msg });
   }
 

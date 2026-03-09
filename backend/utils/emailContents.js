@@ -20,7 +20,8 @@ const newUserEmail = ({ name, email, password }) => ({
       <p>For security, please change your password after your first login.</p>
       <p>If you have any questions, contact your administrator.</p>
     `,
-    footer: "&copy; LinkPanel. This is an automated message, please do not reply.",
+    footer:
+      "&copy; LinkPanel. This is an automated message, please do not reply.",
   }),
   text: `Hi ${name},\n\nYour LinkPanel account has been created.\n\nEmail: ${email}\nPassword: ${password}\n\nPlease change your password after login.`,
 });

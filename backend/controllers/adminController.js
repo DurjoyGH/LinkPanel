@@ -3,18 +3,21 @@ const User = require("../models/user");
 const sendEmail = require("../services/email");
 const { newUserEmail } = require("../utils/emailContents");
 
-// POST /api/admin/add-user
 const addUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email and password are required." });
+      return res
+        .status(400)
+        .json({ message: "Name, email and password are required." });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "A user with this email already exists." });
+      return res
+        .status(409)
+        .json({ message: "A user with this email already exists." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -31,7 +34,8 @@ const addUser = async (req, res) => {
     await sendEmail({ to: email, ...emailContent });
 
     return res.status(201).json({
-      message: "User created successfully. Login credentials sent to their email.",
+      message:
+        "User created successfully. Login credentials sent to their email.",
       user: {
         id: user._id,
         name: user.name,

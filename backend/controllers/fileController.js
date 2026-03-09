@@ -4,20 +4,29 @@ const File = require("../models/file");
 const uploadFile = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: "No file provided." });
+      return res
+        .status(400)
+        .json({ success: false, message: "No file provided." });
     }
 
     const { name, comment } = req.body;
     if (!name?.trim()) {
-      return res.status(400).json({ success: false, message: "File name is required." });
+      return res
+        .status(400)
+        .json({ success: false, message: "File name is required." });
     }
 
     // Build a unique storage path: userId/timestamp-originalname
-    const sanitizedName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const sanitizedName = req.file.originalname.replace(
+      /[^a-zA-Z0-9._-]/g,
+      "_",
+    );
     const storagePath = `${req.user._id}/${Date.now()}/${sanitizedName}`;
     const ext = req.file.originalname.split(".").pop().toLowerCase();
 
-    console.log(`Uploading file: ${req.file.originalname}, size: ${req.file.size}, path: ${storagePath}`);
+    console.log(
+      `Uploading file: ${req.file.originalname}, size: ${req.file.size}, path: ${storagePath}`,
+    );
 
     const { error: uploadError } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET)
@@ -28,10 +37,14 @@ const uploadFile = async (req, res) => {
 
     if (uploadError) {
       console.error("❌ Supabase upload error:", uploadError);
-      return res.status(500).json({ success: false, message: uploadError.message });
+      return res
+        .status(500)
+        .json({ success: false, message: uploadError.message });
     }
 
-    const { data: { publicUrl } } = supabase.storage
+    const {
+      data: { publicUrl },
+    } = supabase.storage
       .from(process.env.SUPABASE_BUCKET)
       .getPublicUrl(storagePath);
 
@@ -50,13 +63,15 @@ const uploadFile = async (req, res) => {
     });
 
     console.log(`File saved to DB with ID: ${file._id}`);
-    res.status(201).json({ success: true, message: "File uploaded successfully.", file });
+    res
+      .status(201)
+      .json({ success: true, message: "File uploaded successfully.", file });
   } catch (error) {
     console.error("❌ Upload error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
- 
+
 const getFiles = async (req, res) => {
   try {
     const files = await File.find({ createdBy: req.user._id })
@@ -71,14 +86,24 @@ const getFiles = async (req, res) => {
 
 const getFileById = async (req, res) => {
   try {
-    const file = await File.findById(req.params.id).populate("createdBy", "name email role");
+    const file = await File.findById(req.params.id).populate(
+      "createdBy",
+      "name email role",
+    );
 
     if (!file) {
-      return res.status(404).json({ success: false, message: "File not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "File not found." });
     }
 
-    if (req.user.role !== "admin" && file.createdBy._id.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: "Access denied." });
+    if (
+      req.user.role !== "admin" &&
+      file.createdBy._id.toString() !== req.user._id.toString()
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied." });
     }
 
     res.status(200).json({ success: true, file });
@@ -87,17 +112,23 @@ const getFileById = async (req, res) => {
   }
 };
 
-
 const deleteFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
 
     if (!file) {
-      return res.status(404).json({ success: false, message: "File not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "File not found." });
     }
 
-    if (req.user.role !== "admin" && file.createdBy._id.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: "Access denied." });
+    if (
+      req.user.role !== "admin" &&
+      file.createdBy._id.toString() !== req.user._id.toString()
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied." });
     }
 
     // Delete from Supabase Storage
@@ -107,12 +138,16 @@ const deleteFile = async (req, res) => {
 
     if (storageError) {
       console.error("❌ Supabase delete error:", storageError);
-      return res.status(500).json({ success: false, message: storageError.message });
+      return res
+        .status(500)
+        .json({ success: false, message: storageError.message });
     }
 
     await file.deleteOne();
 
-    res.status(200).json({ success: true, message: "File deleted successfully." });
+    res
+      .status(200)
+      .json({ success: true, message: "File deleted successfully." });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -125,11 +160,18 @@ const updateFile = async (req, res) => {
     const file = await File.findById(req.params.id);
 
     if (!file) {
-      return res.status(404).json({ success: false, message: "File not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "File not found." });
     }
 
-    if (req.user.role !== "admin" && file.createdBy._id.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: "Access denied." });
+    if (
+      req.user.role !== "admin" &&
+      file.createdBy._id.toString() !== req.user._id.toString()
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied." });
     }
 
     if (name?.trim()) file.name = name.trim();
@@ -137,7 +179,9 @@ const updateFile = async (req, res) => {
 
     await file.save();
 
-    res.status(200).json({ success: true, message: "File updated successfully.", file });
+    res
+      .status(200)
+      .json({ success: true, message: "File updated successfully.", file });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

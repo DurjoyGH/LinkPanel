@@ -11,7 +11,6 @@ export default function UserDashboard() {
   const [lastLogin, setLastLogin] = useState(null);
   const [statsLoading, setStatsLoading] = useState(true);
 
-  // Change password form
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -51,7 +50,9 @@ export default function UserDashboard() {
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
-      showToast.error(err.response?.data?.message || "Failed to change password.");
+      showToast.error(
+        err.response?.data?.message || "Failed to change password.",
+      );
     } finally {
       setPwLoading(false);
     }
@@ -68,12 +69,16 @@ export default function UserDashboard() {
   const statCards = [
     { label: "Links Saved", value: stats.links, icon: "🔗" },
     { label: "Files Uploaded", value: stats.files, icon: "📂" },
-    { label: "Last Login", value: formatDate(lastLogin), icon: "🕐", wide: true },
+    {
+      label: "Last Login",
+      value: formatDate(lastLogin),
+      icon: "🕐",
+      wide: true,
+    },
   ];
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-10">
-
       {/* Heading */}
       <div>
         <h1 className="text-3xl font-bold" style={{ color: "#212529" }}>
@@ -85,17 +90,29 @@ export default function UserDashboard() {
       </div>
 
       {/* Profile Card */}
-      <div className="rounded-2xl shadow-sm p-6" style={{ backgroundColor: "#e9ecef" }}>
-        <h2 className="text-base font-semibold mb-5" style={{ color: "#212529" }}>
+      <div
+        className="rounded-2xl shadow-sm p-6"
+        style={{ backgroundColor: "#e9ecef" }}
+      >
+        <h2
+          className="text-base font-semibold mb-5"
+          style={{ color: "#212529" }}
+        >
           Profile
         </h2>
         <div className="flex flex-col gap-4">
           {[
             { label: "Name", value: authUser?.name },
             { label: "Email", value: authUser?.email },
-            { label: "Role", value: authUser?.role === "admin" ? "Administrator" : "User" },
+            {
+              label: "Role",
+              value: authUser?.role === "admin" ? "Administrator" : "User",
+            },
           ].map(({ label, value }) => (
-            <div key={label} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
+            <div
+              key={label}
+              className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0"
+            >
               <span
                 className="sm:w-28 text-xs font-semibold uppercase tracking-wide"
                 style={{ color: "#6c757d" }}
@@ -115,7 +132,10 @@ export default function UserDashboard() {
 
       {/* Stats */}
       <div>
-        <h2 className="text-base font-semibold mb-4" style={{ color: "#212529" }}>
+        <h2
+          className="text-base font-semibold mb-4"
+          style={{ color: "#212529" }}
+        >
           Statistics
         </h2>
         {statsLoading ? (
@@ -131,12 +151,18 @@ export default function UserDashboard() {
                 style={{ backgroundColor: "#e9ecef" }}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#6c757d" }}>
+                  <span
+                    className="text-xs font-semibold uppercase tracking-wide"
+                    style={{ color: "#6c757d" }}
+                  >
                     {s.label}
                   </span>
                   <span className="text-xl">{s.icon}</span>
                 </div>
-                <p className="text-2xl font-bold truncate" style={{ color: "#212529" }}>
+                <p
+                  className="text-2xl font-bold truncate"
+                  style={{ color: "#212529" }}
+                >
                   {s.value}
                 </p>
               </div>
@@ -146,8 +172,14 @@ export default function UserDashboard() {
       </div>
 
       {/* Change Password */}
-      <div className="rounded-2xl shadow-sm p-6" style={{ backgroundColor: "#e9ecef" }}>
-        <h2 className="text-base font-semibold mb-5" style={{ color: "#212529" }}>
+      <div
+        className="rounded-2xl shadow-sm p-6"
+        style={{ backgroundColor: "#e9ecef" }}
+      >
+        <h2
+          className="text-base font-semibold mb-5"
+          style={{ color: "#212529" }}
+        >
           Change Password
         </h2>
         <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
@@ -172,7 +204,10 @@ export default function UserDashboard() {
             },
           ].map(({ id, label, value, setter }) => (
             <div key={id} className="flex flex-col gap-1">
-              <label className="text-sm font-medium" style={{ color: "#212529" }}>
+              <label
+                className="text-sm font-medium"
+                style={{ color: "#212529" }}
+              >
                 {label}
               </label>
               <input
@@ -198,7 +233,6 @@ export default function UserDashboard() {
           </div>
         </form>
       </div>
-
     </div>
   );
 }

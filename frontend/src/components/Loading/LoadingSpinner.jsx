@@ -1,12 +1,3 @@
-/**
- * LoadingSpinner — project-themed spinner
- *
- * Props:
- *   size      "sm" | "md" | "lg"   default "md"
- *   text      string                optional label below the ring
- *   fullPage  bool                  centres spinner in a tall flex area
- *   className string                extra classes on the outermost element
- */
 export default function LoadingSpinner({
   size = "md",
   text,
@@ -26,7 +17,6 @@ export default function LoadingSpinner({
     />
   );
 
-  /* bare ring only — safe to drop inside buttons / inline contexts */
   if (!text && !fullPage) {
     return <div className={className}>{ring}</div>;
   }

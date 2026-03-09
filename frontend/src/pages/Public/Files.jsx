@@ -8,7 +8,6 @@ import {
 import showToast from "../../components/Toast/CustomToast";
 import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 const formatSize = (bytes) => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -19,8 +18,10 @@ const getFileIcon = (mimeType = "") => {
   if (mimeType.startsWith("image/")) return "🖼️";
   if (mimeType === "application/pdf") return "📄";
   if (mimeType.includes("word")) return "📝";
-  if (mimeType.includes("excel") || mimeType.includes("spreadsheet")) return "📊";
-  if (mimeType.includes("powerpoint") || mimeType.includes("presentation")) return "📑";
+  if (mimeType.includes("excel") || mimeType.includes("spreadsheet"))
+    return "📊";
+  if (mimeType.includes("powerpoint") || mimeType.includes("presentation"))
+    return "📑";
   if (mimeType.includes("zip")) return "🗜️";
   if (mimeType.startsWith("text/")) return "📃";
   return "📁";
@@ -30,12 +31,10 @@ const ACCEPTED =
   ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip," +
   ".jpg,.jpeg,.png,.gif,.webp,.svg";
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function Files() {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Upload form
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -45,19 +44,18 @@ export default function Files() {
   const [formError, setFormError] = useState("");
   const fileInputRef = useRef(null);
 
-  // Edit state
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editComment, setEditComment] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
-  // Delete state
   const [deletingId, setDeletingId] = useState(null);
 
-  // Comment modal
   const [commentModalFile, setCommentModalFile] = useState(null);
 
-  useEffect(() => { fetchFiles(); }, []);
+  useEffect(() => {
+    fetchFiles();
+  }, []);
 
   const fetchFiles = async () => {
     try {
@@ -71,7 +69,6 @@ export default function Files() {
     }
   };
 
-  // ── Drag & drop ────────────────────────────────────────────────────────────
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
@@ -89,11 +86,16 @@ export default function Files() {
     if (!name) setName(file.name.replace(/\.[^/.]+$/, ""));
   };
 
-  // ── Upload ─────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) { setFormError("Please enter a file name."); return; }
-    if (!selectedFile) { setFormError("Please select a file to upload."); return; }
+    if (!name.trim()) {
+      setFormError("Please enter a file name.");
+      return;
+    }
+    if (!selectedFile) {
+      setFormError("Please select a file to upload.");
+      return;
+    }
     setFormError("");
     setSubmitting(true);
     setUploadProgress(0);
@@ -108,7 +110,10 @@ export default function Files() {
         if (e.total) setUploadProgress(Math.round((e.loaded * 100) / e.total));
       });
       setFiles([res.data.file, ...files]);
-      setName(""); setComment(""); setSelectedFile(null); setUploadProgress(0);
+      setName("");
+      setComment("");
+      setSelectedFile(null);
+      setUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
       showToast.success("File uploaded successfully!");
     } catch (err) {
@@ -118,7 +123,6 @@ export default function Files() {
     }
   };
 
-  // ── Edit ───────────────────────────────────────────────────────────────────
   const handleEditStart = (file) => {
     setEditingId(file._id);
     setEditName(file.name);
@@ -127,14 +131,21 @@ export default function Files() {
 
   const handleEditCancel = () => {
     setEditingId(null);
-    setEditName(""); setEditComment("");
+    setEditName("");
+    setEditComment("");
   };
 
   const handleUpdate = async (id) => {
-    if (!editName.trim()) { showToast.error("Name is required."); return; }
+    if (!editName.trim()) {
+      showToast.error("Name is required.");
+      return;
+    }
     setUpdatingId(id);
     try {
-      const res = await updateFile(id, { name: editName.trim(), comment: editComment.trim() });
+      const res = await updateFile(id, {
+        name: editName.trim(),
+        comment: editComment.trim(),
+      });
       setFiles(files.map((f) => (f._id === id ? res.data.file : f)));
       setEditingId(null);
       showToast.success("File updated successfully!");
@@ -145,20 +156,17 @@ export default function Files() {
     }
   };
 
-  // ── Download ────────────────────────────────────────────────────────────────
   const handleDownload = (url, filename) => {
-    // Direct download using anchor tag - bypasses CORS issues
     const a = document.createElement("a");
     a.href = url;
     a.download = filename;
-    a.target = "_blank"; // Opens in new tab if download fails
+    a.target = "_blank";
     a.rel = "noopener noreferrer";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
 
-  // ── Delete ─────────────────────────────────────────────────────────────────
   const handleDelete = async (id) => {
     setDeletingId(id);
     try {
@@ -172,21 +180,25 @@ export default function Files() {
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
       {/* Heading */}
-      <h1 className="text-3xl font-bold mb-2" style={{ color: "#212529" }}>My Files</h1>
+      <h1 className="text-3xl font-bold mb-2" style={{ color: "#212529" }}>
+        My Files
+      </h1>
       <p className="text-sm mb-8" style={{ color: "#6c757d" }}>
         Upload and access your files from anywhere.
       </p>
 
       {/* ── Upload Form ── */}
-      <div className="rounded-2xl shadow-sm p-6 mb-10" style={{ backgroundColor: "#e9ecef" }}>
-        <h2 className="text-lg font-semibold mb-4" style={{ color: "#212529" }}>Upload New File</h2>
+      <div
+        className="rounded-2xl shadow-sm p-6 mb-10"
+        style={{ backgroundColor: "#e9ecef" }}
+      >
+        <h2 className="text-lg font-semibold mb-4" style={{ color: "#212529" }}>
+          Upload New File
+        </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
           {/* File Name */}
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium" style={{ color: "#212529" }}>
@@ -206,30 +218,47 @@ export default function Files() {
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium" style={{ color: "#212529" }}>
               File <span style={{ color: "#dc3545" }}>*</span>
-              <span className="font-normal ml-1" style={{ color: "#6c757d" }}>(max 10 MB)</span>
+              <span className="font-normal ml-1" style={{ color: "#6c757d" }}>
+                (max 10 MB)
+              </span>
             </label>
             <div
               className={`relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 px-4 cursor-pointer transition-colors ${dragOver ? "border-[#adb5bd] bg-[#dee2e6]" : "border-[#ced4da]"}`}
               style={{ backgroundColor: dragOver ? "#dee2e6" : "#d9dde1" }}
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
             >
-              <span className="text-3xl">{selectedFile ? getFileIcon(selectedFile.type) : "☁️"}</span>
+              <span className="text-3xl">
+                {selectedFile ? getFileIcon(selectedFile.type) : "☁️"}
+              </span>
               {selectedFile ? (
                 <div className="text-center">
-                  <p className="text-sm font-semibold truncate max-w-xs" style={{ color: "#212529" }}>
+                  <p
+                    className="text-sm font-semibold truncate max-w-xs"
+                    style={{ color: "#212529" }}
+                  >
                     {selectedFile.name}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: "#6c757d" }}>{formatSize(selectedFile.size)}</p>
+                  <p className="text-xs mt-0.5" style={{ color: "#6c757d" }}>
+                    {formatSize(selectedFile.size)}
+                  </p>
                 </div>
               ) : (
                 <div className="text-center">
-                  <p className="text-sm font-medium" style={{ color: "#495057" }}>
+                  <p
+                    className="text-sm font-medium"
+                    style={{ color: "#495057" }}
+                  >
                     Drag & drop a file here
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: "#6c757d" }}>or click to browse</p>
+                  <p className="text-xs mt-0.5" style={{ color: "#6c757d" }}>
+                    or click to browse
+                  </p>
                 </div>
               )}
               <input
@@ -237,13 +266,19 @@ export default function Files() {
                 type="file"
                 accept={ACCEPTED}
                 className="hidden"
-                onChange={(e) => { if (e.target.files?.[0]) pickFile(e.target.files[0]); }}
+                onChange={(e) => {
+                  if (e.target.files?.[0]) pickFile(e.target.files[0]);
+                }}
               />
             </div>
             {selectedFile && (
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); setSelectedFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedFile(null);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
                 className="self-start text-xs underline underline-offset-2 hover:opacity-70 transition-opacity mt-1"
                 style={{ color: "#6c757d" }}
               >
@@ -254,7 +289,9 @@ export default function Files() {
 
           {/* Comment */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium" style={{ color: "#212529" }}>Comment</label>
+            <label className="text-sm font-medium" style={{ color: "#212529" }}>
+              Comment
+            </label>
             <textarea
               placeholder="Optional note about this file"
               value={comment}
@@ -267,15 +304,25 @@ export default function Files() {
 
           {/* Progress bar */}
           {submitting && (
-            <div className="w-full rounded-full overflow-hidden h-2" style={{ backgroundColor: "#dee2e6" }}>
+            <div
+              className="w-full rounded-full overflow-hidden h-2"
+              style={{ backgroundColor: "#dee2e6" }}
+            >
               <div
                 className="h-2 rounded-full w-16"
-                style={{ backgroundColor: "#6c757d", animation: "slideLoop 1.1s linear infinite" }}
+                style={{
+                  backgroundColor: "#6c757d",
+                  animation: "slideLoop 1.1s linear infinite",
+                }}
               />
             </div>
           )}
 
-          {formError && <p className="text-xs" style={{ color: "#dc3545" }}>{formError}</p>}
+          {formError && (
+            <p className="text-xs" style={{ color: "#dc3545" }}>
+              {formError}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -344,12 +391,20 @@ export default function Files() {
                 /* ── View mode ── */
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <span className="text-2xl flex-shrink-0 mt-0.5">{getFileIcon(file.mimeType)}</span>
+                    <span className="text-2xl flex-shrink-0 mt-0.5">
+                      {getFileIcon(file.mimeType)}
+                    </span>
                     <div className="flex flex-col gap-0.5 min-w-0">
-                      <span className="font-semibold text-sm truncate" style={{ color: "#212529" }}>
+                      <span
+                        className="font-semibold text-sm truncate"
+                        style={{ color: "#212529" }}
+                      >
                         {file.name}
                       </span>
-                      <span className="text-xs truncate" style={{ color: "#6c757d" }}>
+                      <span
+                        className="text-xs truncate"
+                        style={{ color: "#6c757d" }}
+                      >
                         {file.originalName} · {formatSize(file.size)}
                       </span>
                       <button
@@ -363,7 +418,9 @@ export default function Files() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                     <button
-                      onClick={() => handleDownload(file.url, file.originalName)}
+                      onClick={() =>
+                        handleDownload(file.url, file.originalName)
+                      }
                       className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white hover:opacity-85 transition-opacity"
                       style={{ backgroundColor: "#adb5bd" }}
                     >
@@ -409,24 +466,47 @@ export default function Files() {
               className="absolute top-4 right-4 p-1 rounded-lg hover:opacity-70 transition-opacity"
               style={{ color: "#6c757d" }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
             <div className="flex items-center gap-3 pr-6 mb-1">
-              <span className="text-2xl">{getFileIcon(commentModalFile.mimeType)}</span>
-              <h3 className="text-base font-semibold truncate" style={{ color: "#212529" }}>
+              <span className="text-2xl">
+                {getFileIcon(commentModalFile.mimeType)}
+              </span>
+              <h3
+                className="text-base font-semibold truncate"
+                style={{ color: "#212529" }}
+              >
                 {commentModalFile.name}
               </h3>
             </div>
             <p className="text-xs ml-9" style={{ color: "#6c757d" }}>
-              {commentModalFile.originalName} · {formatSize(commentModalFile.size)}
+              {commentModalFile.originalName} ·{" "}
+              {formatSize(commentModalFile.size)}
             </p>
             <hr className="my-4" style={{ borderColor: "#dee2e6" }} />
-            <p className="text-sm font-medium mb-2" style={{ color: "#495057" }}>💬 Comment</p>
+            <p
+              className="text-sm font-medium mb-2"
+              style={{ color: "#495057" }}
+            >
+              💬 Comment
+            </p>
             {commentModalFile.comment ? (
-              <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "#212529" }}>
+              <p
+                className="text-sm leading-relaxed whitespace-pre-wrap"
+                style={{ color: "#212529" }}
+              >
                 {commentModalFile.comment}
               </p>
             ) : (
@@ -437,7 +517,6 @@ export default function Files() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

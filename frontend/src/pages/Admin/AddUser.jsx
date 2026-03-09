@@ -17,10 +17,14 @@ export default function AddUser() {
     setLoading(true);
     try {
       const res = await addUser(form);
-      showToast.success(res.data.message || `User "${form.name}" added successfully.`);
+      showToast.success(
+        res.data.message || `User "${form.name}" added successfully.`,
+      );
       setForm({ name: "", email: "", password: "" });
     } catch (err) {
-      showToast.error(err?.response?.data?.message || "Failed to add user. Please try again.");
+      showToast.error(
+        err?.response?.data?.message || "Failed to add user. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -28,7 +32,6 @@ export default function AddUser() {
 
   return (
     <div className="flex flex-col gap-6 max-w-lg mx-auto w-full">
-
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold" style={{ color: "#212529" }}>
@@ -55,9 +58,11 @@ export default function AddUser() {
       </div>
 
       {/* Form */}
-      <div className="rounded-2xl shadow-sm p-6" style={{ backgroundColor: "#e9ecef" }}>
+      <div
+        className="rounded-2xl shadow-sm p-6"
+        style={{ backgroundColor: "#e9ecef" }}
+      >
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-
           {/* Name */}
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium" style={{ color: "#212529" }}>
@@ -138,7 +143,6 @@ export default function AddUser() {
           </button>
         </form>
       </div>
-
     </div>
   );
 }

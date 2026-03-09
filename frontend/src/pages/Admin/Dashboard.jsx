@@ -2,17 +2,52 @@ import { Link } from "react-router-dom";
 
 const stats = [
   { label: "Total Users", value: "128", icon: "👥", change: "+12 this month" },
-  { label: "Total Links", value: "3,842", icon: "🔗", change: "+340 this week" },
+  {
+    label: "Total Links",
+    value: "3,842",
+    icon: "🔗",
+    change: "+340 this week",
+  },
   { label: "Total Files", value: "916", icon: "📂", change: "+58 this week" },
   { label: "Admins", value: "4", icon: "🔒", change: "No change" },
 ];
 
 const recentUsers = [
-  { id: 1, name: "Alice Johnson", email: "alice@example.com", role: "User", joined: "2026-03-01" },
-  { id: 2, name: "Bob Smith", email: "bob@example.com", role: "Admin", joined: "2026-03-02" },
-  { id: 3, name: "Carol White", email: "carol@example.com", role: "User", joined: "2026-03-03" },
-  { id: 4, name: "David Lee", email: "david@example.com", role: "User", joined: "2026-03-03" },
-  { id: 5, name: "Eva Brown", email: "eva@example.com", role: "User", joined: "2026-03-04" },
+  {
+    id: 1,
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    role: "User",
+    joined: "2026-03-01",
+  },
+  {
+    id: 2,
+    name: "Bob Smith",
+    email: "bob@example.com",
+    role: "Admin",
+    joined: "2026-03-02",
+  },
+  {
+    id: 3,
+    name: "Carol White",
+    email: "carol@example.com",
+    role: "User",
+    joined: "2026-03-03",
+  },
+  {
+    id: 4,
+    name: "David Lee",
+    email: "david@example.com",
+    role: "User",
+    joined: "2026-03-03",
+  },
+  {
+    id: 5,
+    name: "Eva Brown",
+    email: "eva@example.com",
+    role: "User",
+    joined: "2026-03-04",
+  },
 ];
 
 const quickActions = [
@@ -25,7 +60,6 @@ const quickActions = [
 export default function Dashboard() {
   return (
     <div className="flex flex-col gap-8">
-
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold" style={{ color: "#212529" }}>
@@ -45,7 +79,10 @@ export default function Dashboard() {
             style={{ backgroundColor: "#e9ecef" }}
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium" style={{ color: "#6c757d" }}>
+              <span
+                className="text-sm font-medium"
+                style={{ color: "#6c757d" }}
+              >
                 {s.label}
               </span>
               <span className="text-2xl group-hover:scale-110 transition-transform duration-300">
@@ -134,7 +171,6 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-
     </div>
   );
 }

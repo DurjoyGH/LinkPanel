@@ -34,15 +34,26 @@ const features = [
 ];
 
 const steps = [
-  { step: "01", title: "Create an account", desc: "Sign up in seconds with just your email." },
-  { step: "02", title: "Save your content", desc: "Paste links or upload files from any device." },
-  { step: "03", title: "Access anywhere", desc: "Open your panel remotely and grab what you need." },
+  {
+    step: "01",
+    title: "Create an account",
+    desc: "Sign up in seconds with just your email.",
+  },
+  {
+    step: "02",
+    title: "Save your content",
+    desc: "Paste links or upload files from any device.",
+  },
+  {
+    step: "03",
+    title: "Access anywhere",
+    desc: "Open your panel remotely and grab what you need.",
+  },
 ];
 
 export default function Home() {
   return (
     <div className="w-full">
-
       {/* ── Hero ── */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center text-center gap-6">
         <span
@@ -63,7 +74,8 @@ export default function Home() {
           className="text-base sm:text-lg max-w-xl leading-relaxed animate-fade-up-delay-1"
           style={{ color: "#6c757d" }}
         >
-          LinkPanel lets you save links and files in one place and access them remotely from any device — instantly.
+          LinkPanel lets you save links and files in one place and access them
+          remotely from any device — instantly.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 animate-fade-up-delay-2">
@@ -110,10 +122,16 @@ export default function Home() {
               <span className="text-3xl mb-4 block group-hover:scale-110 transition-transform duration-300">
                 {f.icon}
               </span>
-              <h3 className="font-semibold text-base mb-2 group-hover:underline underline-offset-4 transition-all" style={{ color: "#212529" }}>
+              <h3
+                className="font-semibold text-base mb-2 group-hover:underline underline-offset-4 transition-all"
+                style={{ color: "#212529" }}
+              >
                 {f.title}
               </h3>
-              <p className="text-sm leading-relaxed" style={{ color: "#6c757d" }}>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "#6c757d" }}
+              >
                 {f.desc}
               </p>
             </div>
@@ -139,17 +157,23 @@ export default function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {steps.map((s, i) => (
-            <div key={i} className="flex flex-col items-center text-center gap-3 animate-fade-up">
-              <span
-                className="text-4xl font-bold"
-                style={{ color: "#adb5bd" }}
-              >
+            <div
+              key={i}
+              className="flex flex-col items-center text-center gap-3 animate-fade-up"
+            >
+              <span className="text-4xl font-bold" style={{ color: "#adb5bd" }}>
                 {s.step}
               </span>
-              <h4 className="font-semibold text-base" style={{ color: "#212529" }}>
+              <h4
+                className="font-semibold text-base"
+                style={{ color: "#212529" }}
+              >
                 {s.title}
               </h4>
-              <p className="text-sm leading-relaxed" style={{ color: "#6c757d" }}>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "#6c757d" }}
+              >
                 {s.desc}
               </p>
             </div>
@@ -164,11 +188,18 @@ export default function Home() {
 
       {/* ── CTA Banner ── */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center text-center gap-6">
-        <h2 className="text-3xl sm:text-4xl font-bold animate-fade-up" style={{ color: "#212529" }}>
+        <h2
+          className="text-3xl sm:text-4xl font-bold animate-fade-up"
+          style={{ color: "#212529" }}
+        >
           Ready to get started?
         </h2>
-        <p className="text-sm max-w-md leading-relaxed animate-fade-up-delay-1" style={{ color: "#6c757d" }}>
-          Join LinkPanel and keep all your links and files at your fingertips — anywhere, anytime.
+        <p
+          className="text-sm max-w-md leading-relaxed animate-fade-up-delay-1"
+          style={{ color: "#6c757d" }}
+        >
+          Join LinkPanel and keep all your links and files at your fingertips —
+          anywhere, anytime.
         </p>
         <Link
           to="/login"
@@ -178,7 +209,6 @@ export default function Home() {
           Get Started &rarr;
         </Link>
       </section>
-
     </div>
   );
 }

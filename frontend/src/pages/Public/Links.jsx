@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { getLinks, createLink, updateLink, deleteLink } from "../../services/publicApi";
+import {
+  getLinks,
+  createLink,
+  updateLink,
+  deleteLink,
+} from "../../services/publicApi";
 import showToast from "../../components/Toast/CustomToast";
 import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
@@ -14,14 +19,12 @@ export default function Links() {
   const [deletingId, setDeletingId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
 
-  // Edit state
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editUrl, setEditUrl] = useState("");
   const [editComment, setEditComment] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
-  // Comment modal state
   const [commentModalLink, setCommentModalLink] = useState(null);
 
   useEffect(() => {
@@ -49,7 +52,11 @@ export default function Links() {
     setError("");
     setSubmitting(true);
     try {
-      const res = await createLink({ name: name.trim(), url: url.trim(), comment: comment.trim() });
+      const res = await createLink({
+        name: name.trim(),
+        url: url.trim(),
+        comment: comment.trim(),
+      });
       setLinks([res.data.link, ...links]);
       setName("");
       setUrl("");
@@ -83,7 +90,11 @@ export default function Links() {
     }
     setUpdatingId(id);
     try {
-      const res = await updateLink(id, { name: editName.trim(), url: editUrl.trim(), comment: editComment.trim() });
+      const res = await updateLink(id, {
+        name: editName.trim(),
+        url: editUrl.trim(),
+        comment: editComment.trim(),
+      });
       setLinks(links.map((l) => (l._id === id ? res.data.link : l)));
       setEditingId(null);
       showToast.success("Link updated successfully!");
@@ -116,7 +127,6 @@ export default function Links() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
       {/* Heading */}
       <h1 className="text-3xl font-bold mb-2" style={{ color: "#212529" }}>
         My Links
@@ -126,7 +136,10 @@ export default function Links() {
       </p>
 
       {/* Add Link Form */}
-      <div className="rounded-2xl shadow-sm p-6 mb-10" style={{ backgroundColor: "#e9ecef" }}>
+      <div
+        className="rounded-2xl shadow-sm p-6 mb-10"
+        style={{ backgroundColor: "#e9ecef" }}
+      >
         <h2 className="text-lg font-semibold mb-4" style={{ color: "#212529" }}>
           Add New Link
         </h2>
@@ -250,10 +263,16 @@ export default function Links() {
                 /* ── View mode ── */
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4">
                   <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="font-semibold text-sm truncate" style={{ color: "#212529" }}>
+                    <span
+                      className="font-semibold text-sm truncate"
+                      style={{ color: "#212529" }}
+                    >
                       {link.name}
                     </span>
-                    <span className="text-xs truncate" style={{ color: "#6c757d" }}>
+                    <span
+                      className="text-xs truncate"
+                      style={{ color: "#6c757d" }}
+                    >
                       {link.url}
                     </span>
                     <button
@@ -269,15 +288,43 @@ export default function Links() {
                       onClick={() => handleCopy(link)}
                       title="Copy link"
                       className="p-1.5 rounded-lg hover:opacity-85 transition-opacity"
-                      style={{ backgroundColor: "#dee2e6", color: copiedId === link._id ? "#198754" : "#6c757d" }}
+                      style={{
+                        backgroundColor: "#dee2e6",
+                        color: copiedId === link._id ? "#198754" : "#6c757d",
+                      }}
                     >
                       {copiedId === link._id ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                       ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect
+                            x="9"
+                            y="9"
+                            width="13"
+                            height="13"
+                            rx="2"
+                            ry="2"
+                          />
                           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                         </svg>
                       )}
@@ -333,14 +380,26 @@ export default function Links() {
               style={{ color: "#6c757d" }}
               title="Close"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
 
             {/* Modal header */}
-            <h3 className="text-base font-semibold mb-1 pr-6" style={{ color: "#212529" }}>
+            <h3
+              className="text-base font-semibold mb-1 pr-6"
+              style={{ color: "#212529" }}
+            >
               {commentModalLink.name}
             </h3>
             <a
@@ -357,9 +416,17 @@ export default function Links() {
             <hr className="my-4" style={{ borderColor: "#dee2e6" }} />
 
             {/* Comment content */}
-            <p className="text-sm font-medium mb-2" style={{ color: "#495057" }}>💬 Comment</p>
+            <p
+              className="text-sm font-medium mb-2"
+              style={{ color: "#495057" }}
+            >
+              💬 Comment
+            </p>
             {commentModalLink.comment ? (
-              <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "#212529" }}>
+              <p
+                className="text-sm leading-relaxed whitespace-pre-wrap"
+                style={{ color: "#212529" }}
+              >
                 {commentModalLink.comment}
               </p>
             ) : (
@@ -370,7 +437,6 @@ export default function Links() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

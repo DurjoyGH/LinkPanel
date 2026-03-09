@@ -90,24 +90,32 @@ exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Both current and new password are required." });
+      return res
+        .status(400)
+        .json({ message: "Both current and new password are required." });
     }
 
     if (newPassword.length < 6) {
-      return res.status(400).json({ message: "New password must be at least 6 characters." });
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters." });
     }
 
     const user = await User.findById(req.user._id);
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Current password is incorrect." });
+      return res
+        .status(400)
+        .json({ message: "Current password is incorrect." });
     }
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    res.status(200).json({ success: true, message: "Password changed successfully." });
+    res
+      .status(200)
+      .json({ success: true, message: "Password changed successfully." });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error!" });
