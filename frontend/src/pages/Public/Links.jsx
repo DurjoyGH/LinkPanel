@@ -35,6 +35,15 @@ export default function Links() {
   const [sharedUrl, setSharedUrl] = useState("");
   const [shareCopied, setShareCopied] = useState(false);
 
+  // Pagination
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(links.length / PAGE_SIZE));
+  const paginatedLinks = links.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
   useEffect(() => {
     fetchLinks();
   }, []);
@@ -66,6 +75,7 @@ export default function Links() {
         comment: comment.trim(),
       });
       setLinks([res.data.link, ...links]);
+      setCurrentPage(1);
       setName("");
       setUrl("");
       setComment("");
@@ -124,7 +134,10 @@ export default function Links() {
     setDeletingId(id);
     try {
       await deleteLink(id);
-      setLinks(links.filter((l) => l._id !== id));
+      const next = links.filter((l) => l._id !== id);
+      setLinks(next);
+      const newTotal = Math.max(1, Math.ceil(next.length / PAGE_SIZE));
+      if (currentPage > newTotal) setCurrentPage(newTotal);
       showToast.success("Link deleted.");
     } catch (err) {
       showToast.error(err.response?.data?.message || "Failed to delete link.");
@@ -254,7 +267,7 @@ export default function Links() {
         </p>
       ) : (
         <div className="flex flex-col gap-3">
-          {links.map((link) => (
+          {paginatedLinks.map((link) => (
             <div
               key={link._id}
               className="rounded-xl shadow-sm overflow-hidden"
@@ -404,6 +417,43 @@ export default function Links() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-1.5 mt-6 flex-wrap">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-85 disabled:opacity-40"
+            style={{ backgroundColor: "#dee2e6", color: "#212529" }}
+          >
+            ← Prev
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className="w-8 h-8 rounded-lg text-xs font-semibold transition-opacity hover:opacity-85"
+              style={{
+                backgroundColor: page === currentPage ? "#6c757d" : "#dee2e6",
+                color: page === currentPage ? "#fff" : "#212529",
+              }}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-85 disabled:opacity-40"
+            style={{ backgroundColor: "#dee2e6", color: "#212529" }}
+          >
+            Next →
+          </button>
         </div>
       )}
 
